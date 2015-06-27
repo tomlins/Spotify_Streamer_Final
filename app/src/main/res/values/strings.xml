@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Spotify Streamer</string>
+    <string name="search_hint">Search artist or group</string>
+    <string name="title_activity_artist_top_tracks">Top 10 Tracks</string>
+
+    <string name="toast_todo_coming_soon">TODO: Coming soon!</string>
+    <string name="toast_artist_not_found">Artist not found!</string>
+    <string name="toast_no_tracks_found">No tracks found!</string>
+    <string name="toast_check_connection">No internet connection. Check your connectivity</string>
+
+    <string name="progress_dialog_search_artist_title">Searching</string>
+    <string name="progress_dialog_top_tracks_title">Getting Top Tracks</string>
+    <string name="progress_dialog_please_wait">Please wait...</string>
+
+
+</resources>
