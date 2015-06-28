@@ -12,12 +12,15 @@ import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import net.tomlins.android.udacity.spotifystreamer.R;
 import net.tomlins.android.udacity.spotifystreamer.adapter.SearchResultsListArrayAdapter;
 import net.tomlins.android.udacity.spotifystreamer.utils.ConnectivityHelper;
+
+import java.util.ArrayList;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -36,6 +39,7 @@ public class SearchResultsFragment extends ListFragment {
     private SearchResultsListArrayAdapter adapter;
     private ProgressDialog progressDialog;
     private ListView rootView;
+    private View emptyView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,20 +55,22 @@ public class SearchResultsFragment extends ListFragment {
                 container,
                 false);
 
-        // Upon first starting, set the fragment wallpaper based on orientation
-        // to display Spotify logo
-        if (adapter == null ) {
-            int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-            if (rotation == Surface.ROTATION_0) {
-                rootView.setBackgroundResource(R.drawable.spotify);
-            } else {
-                rootView.setBackgroundResource(R.drawable.spotify_landscspe);
-            }
-        } else {
-            rootView.setBackgroundResource(0);
-        }
+        emptyView = inflater.inflate(
+                R.layout.empty_view,
+                container,
+                false);
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(LOG_TAG, "onActivityCreated called");
+
+        ((ViewGroup)getListView().getParent()).addView(emptyView);
+        getListView().setEmptyView(emptyView);
+
     }
 
     @Override

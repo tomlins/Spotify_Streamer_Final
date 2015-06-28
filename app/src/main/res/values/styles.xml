@@ -15,8 +15,8 @@
         name="MyActionBar"
         parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
 
-        <item name="android:background">@color/spotify_dark_green</item>
-        <item name="background">@color/spotify_dark_green</item>
+        <item name="android:background">@color/spotify_green</item>
+        <item name="background">@color/spotify_green</item>
 
         <item name="titleTextStyle">@style/MyActionBarTitleText</item>
     </style>
