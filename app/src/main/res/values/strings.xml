@@ -11,6 +11,7 @@
     <string name="progress_dialog_search_artist_title">Searching</string>
     <string name="progress_dialog_top_tracks_title">Getting Top Tracks</string>
     <string name="progress_dialog_please_wait">Please wait...</string>
+    <string name="intro_text">Your Favourite Music Is Right Here</string>
 
 
 </resources>
