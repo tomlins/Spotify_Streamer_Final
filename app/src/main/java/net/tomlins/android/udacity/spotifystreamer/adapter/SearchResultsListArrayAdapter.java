@@ -57,7 +57,6 @@ public class SearchResultsListArrayAdapter extends ArrayAdapter<Artist> {
             viewHolder.index = position;
             viewHolder.artistThumbnail = (ImageView) view.findViewById(R.id.artist_thumbnail);
             viewHolder.artistName = (TextView) view.findViewById(R.id.artist_name);
-
             view.setTag(viewHolder);
 
         } else {
@@ -66,6 +65,7 @@ public class SearchResultsListArrayAdapter extends ArrayAdapter<Artist> {
             viewHolder.index = position;
         }
 
+        // Retrieve the smallest image available to use for the image view thumbnail
         String url = ImageHelper.findSmallestImage(artist.images);
         if (url == null) {
             Log.d(TAG, "No image available for " + artist.name + " using default");

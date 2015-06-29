@@ -57,7 +57,6 @@ public class ArtistTopTracksAdapter extends ArrayAdapter<Track> {
             viewHolder.albumImageView = (ImageView) view.findViewById(R.id.albumImageView);
             viewHolder.trackName = (TextView) view.findViewById(R.id.trackName_textView);
             viewHolder.albumTitle = (TextView) view.findViewById(R.id.albumTitle_textView);
-
             view.setTag(viewHolder);
 
         } else {
@@ -66,6 +65,7 @@ public class ArtistTopTracksAdapter extends ArrayAdapter<Track> {
             viewHolder.index = position;
         }
 
+        // Retrieve the smallest image available to use for the image view thumbnail
         String url = ImageHelper.findSmallestImage(track.album.images);
         if (url == null) {
             Log.d(TAG, "No image available for " + track.album.name + ", using default");

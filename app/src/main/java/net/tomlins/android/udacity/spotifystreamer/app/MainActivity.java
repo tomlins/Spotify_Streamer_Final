@@ -3,16 +3,11 @@ package net.tomlins.android.udacity.spotifystreamer.app;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -37,7 +32,8 @@ public class MainActivity extends ActionBarActivity {
     public void onNewIntent(Intent intent) {
         Log.d(LOG_TAG, "onNewIntent called");
 
-        if (getIntent().ACTION_SEARCH.equals(intent.getAction())) {
+        getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             searchView.clearFocus();
 
             if (!ConnectivityHelper.isConnectedToInternet(this)) {

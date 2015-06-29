@@ -16,10 +16,10 @@ public class ArtistTopTracksActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_top_tracks);
 
-        // Set the subtitle for the action bar
+        // Retrieve and set the subtitle for the action bar
         Intent intent = getIntent();
         String artistName = intent.getStringExtra(SearchResultsFragment.ARTIST_NAME);
-        if (artistName != null) {
+        if (artistName != null && getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(artistName);
         }
     }

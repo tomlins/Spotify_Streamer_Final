@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,15 +17,11 @@ import android.widget.Toast;
 
 import net.tomlins.android.udacity.spotifystreamer.R;
 import net.tomlins.android.udacity.spotifystreamer.adapter.ArtistTopTracksAdapter;
-import net.tomlins.android.udacity.spotifystreamer.adapter.SearchResultsListArrayAdapter;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
 
 /**
@@ -38,16 +35,15 @@ public class TopTracksFragment extends ListFragment {
     private ListView rootView;
     private String currentArtistId;
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(LOG_TAG, "onCreateView called");
 
         // Preserves state, e.g. on rotation
         setRetainInstance(true);
 
-        // Inflate the layout for this fragment
+        // Inflate the layout for this list fragment
         rootView = (ListView)inflater.inflate(
                 R.layout.fragment_top_tracks_list_view,
                 container,
@@ -56,12 +52,16 @@ public class TopTracksFragment extends ListFragment {
         return rootView;
     }
 
+    /**
+     * When this fragment starts, launch the AsyncTask to retrieve the top
+     * tracks for the selected artist if a new artist selection has been made
+     */
     @Override
     public void onStart() {
         super.onStart();
         Intent intent = getActivity().getIntent();
         String artistId = intent.getStringExtra(SearchResultsFragment.ARTIST_ID);
-        if (artistId != currentArtistId) {
+        if (!artistId.equals(currentArtistId)) {
             // Load top tracks only if different artist selected, i.e. not on rotation
             currentArtistId = artistId;
             new FetchArtistTopTracksAsyncTask().execute(artistId);
@@ -75,6 +75,9 @@ public class TopTracksFragment extends ListFragment {
         Toast.makeText(getActivity(), R.string.toast_todo_coming_soon, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Retrieves top tracks for the specified artist and sets the adapter and list view
+     */
     private class FetchArtistTopTracksAsyncTask extends AsyncTask<String, Void, Tracks> {
 
         public final String LOG_TAG = FetchArtistTopTracksAsyncTask.class.getSimpleName();
@@ -98,6 +101,8 @@ public class TopTracksFragment extends ListFragment {
 
         @Override
         protected void onPreExecute() {
+            // Display a please wait dialog that is displayed whilst
+            // background task in progress
             progressDialog = ProgressDialog.show(getActivity(),
                     getString(R.string.progress_dialog_top_tracks_title),
                     getString(R.string.progress_dialog_please_wait),
@@ -111,7 +116,7 @@ public class TopTracksFragment extends ListFragment {
             try {
                 progressDialog.dismiss();
             } catch (Exception x) {
-                Log.d(LOG_TAG, "Progress dialog detached from window");
+                Log.d(LOG_TAG, "Progress dialog detached from view");
             }
 
             if (tracks == null || tracks.tracks.size() == 0) {
