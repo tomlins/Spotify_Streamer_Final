@@ -32,10 +32,11 @@ public class MainActivity extends ActionBarActivity {
     public void onNewIntent(Intent intent) {
         Log.d(LOG_TAG, "onNewIntent called");
 
-        getIntent();
+        // Search intent received
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             searchView.clearFocus();
 
+            // Check connectivity
             if (!ConnectivityHelper.isConnectedToInternet(this)) {
                 Log.d(LOG_TAG, "No internet connection");
                 Toast.makeText(getApplicationContext(),
@@ -43,10 +44,14 @@ public class MainActivity extends ActionBarActivity {
                 return;
             }
 
+            // Obtain the search query and perform the artist search
+            String query = intent.getStringExtra(SearchManager.QUERY);
+
+            // Get a handle on this activities fragment that will perform the search
+            // and display results
             SearchResultsFragment searchResultsFragment =
                     (SearchResultsFragment) getFragmentManager().findFragmentById(R.id.fragment_main);
 
-            String query = intent.getStringExtra(SearchManager.QUERY);
             searchResultsFragment.doSearch(query);
         }
     }

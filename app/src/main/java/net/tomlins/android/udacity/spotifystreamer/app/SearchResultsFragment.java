@@ -44,7 +44,8 @@ public class SearchResultsFragment extends ListFragment {
         // Preserves state, e.g. on rotation
         setRetainInstance(true);
 
-        // Inflate the view for use when no results, ie app launch
+        // Inflate the view for use when no artist search results
+        // to display, ie app launch
         emptyView = inflater.inflate(
                 R.layout.empty_view,
                 container,
@@ -77,7 +78,7 @@ public class SearchResultsFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         Log.d(LOG_TAG, "onListItemClick called, list position " + position);
 
-        // Check internet connectivity before making request
+        // Check internet connectivity before making launching new intent
         if (!ConnectivityHelper.isConnectedToInternet(getActivity())) {
             Log.d(LOG_TAG, "No internet connection");
             Toast.makeText(getActivity(),
