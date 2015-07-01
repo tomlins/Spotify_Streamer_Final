@@ -94,7 +94,6 @@ public class TopTracksFragment extends ListFragment {
                 tracks = spotifyService.getArtistTopTrack(artistId[0], params);
             } catch (Exception x) {
                 Log.e(LOG_TAG, "Error calling Spotify API", x);
-                progressDialog.dismiss();
             }
             return tracks;
         }

@@ -119,7 +119,6 @@ public class SearchResultsFragment extends ListFragment {
                 results = spotifyService.searchArtists(query[0]);
             } catch (Exception x) {
                 Log.e(LOG_TAG, "Error calling Spotify API", x);
-                progressDialog.dismiss();
             }
             return results;
         }
