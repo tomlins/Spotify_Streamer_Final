@@ -1,4 +1,4 @@
-package app.project1.net.tomlins.android.spotifyStreamer;
+package app.net.tomlins.android.spotifystreamer;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
