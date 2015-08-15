@@ -14,19 +14,42 @@ import android.widget.Toast;
 import net.tomlins.android.udacity.spotifystreamer.R;
 import net.tomlins.android.udacity.spotifystreamer.utils.ConnectivityHelper;
 
+import kaaes.spotify.webapi.android.models.Artist;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends ActionBarActivity implements SearchResultsFragment.Callback {
 
     public final String LOG_TAG = MainActivity.class.getSimpleName();
     private SearchView searchView;
+    private boolean mMasterDetailView = false;
+    private static final String TOPTRACKSFRAGMENT_TAG = "TTFRAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "onCreate called");
 
+        // pull the appropriate view for phone/tablet dir
         setContentView(R.layout.activity_main);
+
+        // Are we on phone or tablet?
+        // TODO: we could replace this check with the value in the bools.xml file
+        if (findViewById(R.id.artist_top_tracks_container) != null) {
+            // If we find this container in our view, we must be using the one for the tablet
+            // therefore, load the TopTracksFragment into the container placeholder
+            mMasterDetailView = true;
+            if (savedInstanceState == null) {
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.artist_top_tracks_container, new TopTracksFragment(), TOPTRACKSFRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            mMasterDetailView = false;
+            getSupportActionBar().setElevation(0f);
+        }
+
     }
+
 
     @Override
     public void onNewIntent(Intent intent) {
@@ -83,6 +106,35 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onItemSelected(Artist artist) {
+
+        if (mMasterDetailView) {
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            Bundle args = new Bundle();
+            args.putString(SearchResultsFragment.ARTIST_ID, artist.id);
+            args.putString(SearchResultsFragment.ARTIST_NAME, artist.name);
+
+            TopTracksFragment fragment = new TopTracksFragment();
+            fragment.setArguments(args);
+
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.artist_top_tracks_container, fragment, TOPTRACKSFRAGMENT_TAG)
+                    .commit();
+        } else {
+            // Invoke intent passing selected artist id to retrieve top
+            // tracks and artist name to use in subtitle
+            Intent intent = new Intent(this, ArtistTopTracksActivity.class);
+            intent.putExtra(SearchResultsFragment.ARTIST_ID, artist.id);
+            intent.putExtra(SearchResultsFragment.ARTIST_NAME, artist.name);
+            startActivity(intent);
+        }
+
+
     }
 
 }

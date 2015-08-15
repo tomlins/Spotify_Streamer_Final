@@ -3,8 +3,9 @@
 
     <color name="spotify_green">#aed000</color>
     <color name="spotify_dark_green">#82b919</color>
-    <color name="spotify_grey">#999999</color>
-    <color name="spotify_lt_grey">#666666</color>
+    <color name="spotify_light_green">#C3FDB8</color>
+    <color name="spotify_grey">#666666</color>
+    <color name="spotify_lt_grey">#999999</color>
     <color name="spotify_dark_grey">#262626</color>
     <color name="spotify_white">#ffffff</color>
 

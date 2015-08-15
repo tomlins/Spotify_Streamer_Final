@@ -18,10 +18,30 @@ public class ArtistTopTracksActivity extends ActionBarActivity {
 
         // Retrieve and set the subtitle for the action bar to the selected artist
         Intent intent = getIntent();
+        String artistId = intent.getStringExtra(SearchResultsFragment.ARTIST_ID);
         String artistName = intent.getStringExtra(SearchResultsFragment.ARTIST_NAME);
         if (artistName != null && getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(artistName);
         }
+
+        if (savedInstanceState == null) {
+
+            // Create the detail fragment and add it to the activity
+            // using a fragment transaction.
+
+            Bundle args = new Bundle();
+            args.putString(SearchResultsFragment.ARTIST_ID, artistId);
+            args.putString(SearchResultsFragment.ARTIST_NAME, artistName);
+
+            TopTracksFragment fragment = new TopTracksFragment();
+            fragment.setArguments(args);
+
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.artist_top_tracks_container, fragment)
+                    .commit();
+        }
+
     }
 
     @Override
@@ -32,14 +52,11 @@ public class ArtistTopTracksActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (item.getItemId() == R.id.action_settings) {
             Toast.makeText(getApplicationContext(),
                     R.string.toast_todo_coming_soon, Toast.LENGTH_SHORT).show();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

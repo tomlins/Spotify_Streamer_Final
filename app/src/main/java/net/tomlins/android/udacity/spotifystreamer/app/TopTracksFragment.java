@@ -1,6 +1,8 @@
 package net.tomlins.android.udacity.spotifystreamer.app;
 
 
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -22,6 +24,7 @@ import java.util.HashMap;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
 
 /**
@@ -59,20 +62,49 @@ public class TopTracksFragment extends ListFragment {
     @Override
     public void onStart() {
         super.onStart();
-        Intent intent = getActivity().getIntent();
-        String artistId = intent.getStringExtra(SearchResultsFragment.ARTIST_ID);
+        Log.d(LOG_TAG, "onStart called");
+
+        Bundle args = getArguments();
+        if (args==null)
+            return;
+
+        String artistId = args.getString(SearchResultsFragment.ARTIST_ID);
+        String artistName = args.getString(SearchResultsFragment.ARTIST_NAME);
+
         if (!artistId.equals(currentArtistId)) {
             // Load top tracks only if different artist selected, i.e. not on rotation
             currentArtistId = artistId;
             new FetchArtistTopTracksAsyncTask().execute(artistId);
-
         }
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Log.d(LOG_TAG, "onListItemClick called, list position " + position);
-        Toast.makeText(getActivity(), R.string.toast_todo_coming_soon, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), R.string.toast_todo_coming_soon, Toast.LENGTH_SHORT).show();
+
+        Track track = (Track) getListView().getItemAtPosition(position);
+
+        MediaPlayerDialogFragment dialogFragment = MediaPlayerDialogFragment.newInstance();
+        if (getResources().getBoolean(R.bool.large_layout)) {
+            dialogFragment.show(getFragmentManager(), "dialog");
+        } else {
+//            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//            // For a little polish, specify a transition animation
+//            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//            // To make it fullscreen, use the 'content' root view as the container
+//            // for the fragment, which is always dialogFragment root view for the activity
+//            transaction.replace(R.id.artist_top_tracks_container, dialogFragment)
+//                    .addToBackStack(null)
+//                    .commit();
+
+            Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
+//            intent.putExtra(SearchResultsFragment.ARTIST_ID, artist.id);
+//            intent.putExtra(SearchResultsFragment.ARTIST_NAME, artist.name);
+            startActivity(intent);
+
+        }
+
     }
 
     /**
