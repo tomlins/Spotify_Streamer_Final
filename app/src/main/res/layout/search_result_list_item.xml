@@ -2,7 +2,8 @@
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:layout_width="fill_parent"
     android:orientation="horizontal"
-    android:padding="12dip">
+    android:padding="12dip"
+    android:background="@drawable/touch_selector">
 
     <ImageView
         android:id="@+id/artist_thumbnail"

@@ -36,6 +36,16 @@ public class SearchResultsFragment extends ListFragment {
     private ListView rootView;
     private View emptyView;
 
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections in associated fragments.
+     */
+    public interface Callback {
+        void onItemSelected(Artist artist);
+    }
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,13 +96,8 @@ public class SearchResultsFragment extends ListFragment {
             return;
         }
 
-        // Invoke intent passing selected artist id to retrieve top
-        // tracks and artist name to use in subtitle
-        Artist artist = (Artist)getListView().getItemAtPosition(position);
-        Intent intent = new Intent(getActivity(), ArtistTopTracksActivity.class);
-        intent.putExtra(ARTIST_ID, artist.id);
-        intent.putExtra(ARTIST_NAME, artist.name);
-        startActivity(intent);
+        Artist artist = (Artist) getListView().getItemAtPosition(position);
+        ((Callback) getActivity()).onItemSelected(artist);
     }
 
     public void doSearch(final String query) {
