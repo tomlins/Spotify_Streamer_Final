@@ -16,27 +16,31 @@ public class MediaPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_media_player);
 
         // Retrieve and set the subtitle for the action bar to the selected artist
-//        Intent intent = getIntent();
-//        String artistId = intent.getStringExtra(SearchResultsFragment.ARTIST_ID);
-//        String artistName = intent.getStringExtra(SearchResultsFragment.ARTIST_NAME);
-//        if (artistName != null && getSupportActionBar() != null) {
-//            getSupportActionBar().setSubtitle(artistName);
-//        }
+        Intent intent = getIntent();
+        String artistName = intent.getStringExtra("artistName");
+        String trackName = intent.getStringExtra("trackName");
+        String albumName = intent.getStringExtra("albumName");
+        String albumArtUrl = intent.getStringExtra("albumArtUrl");
+        String trackUrl = intent.getStringExtra("trackUrl");
+        long duration = intent.getLongExtra("duration", 0L);
 
         if (savedInstanceState == null) {
-
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
 
             Bundle args = new Bundle();
 //            args.putString(SearchResultsFragment.ARTIST_ID, artistId);
 //            args.putString(SearchResultsFragment.ARTIST_NAME, artistName);
 
-            MediaPlayerDialogFragment fragment = new MediaPlayerDialogFragment();
-            fragment.setArguments(args);
+            MediaPlayerDialogFragment dialogFragment = MediaPlayerDialogFragment.newInstance(
+                    artistName,
+                    trackName,
+                    albumName,
+                    albumArtUrl,
+                    trackUrl,
+                    duration
+            );
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.media_player_container, fragment)
+                    .add(R.id.media_player_container, dialogFragment)
                     .commit();
         }
 

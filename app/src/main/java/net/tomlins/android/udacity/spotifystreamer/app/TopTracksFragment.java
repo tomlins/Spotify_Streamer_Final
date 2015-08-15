@@ -19,8 +19,12 @@ import android.widget.Toast;
 
 import net.tomlins.android.udacity.spotifystreamer.R;
 import net.tomlins.android.udacity.spotifystreamer.adapter.ArtistTopTracksAdapter;
+import net.tomlins.android.udacity.spotifystreamer.utils.ImageHelper;
+import net.tomlins.android.udacity.spotifystreamer.utils.ParcelableTrack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -37,6 +41,7 @@ public class TopTracksFragment extends ListFragment {
     private ProgressDialog progressDialog;
     private ListView rootView;
     private String currentArtistId;
+    private String artistName;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -47,7 +52,7 @@ public class TopTracksFragment extends ListFragment {
         setRetainInstance(true);
 
         // Inflate the layout for this list fragment
-        rootView = (ListView)inflater.inflate(
+        rootView = (ListView) inflater.inflate(
                 R.layout.fragment_top_tracks_list_view,
                 container,
                 false);
@@ -65,15 +70,14 @@ public class TopTracksFragment extends ListFragment {
         Log.d(LOG_TAG, "onStart called");
 
         Bundle args = getArguments();
-        if (args==null)
+        if (args == null)
             return;
 
         String artistId = args.getString(SearchResultsFragment.ARTIST_ID);
-        String artistName = args.getString(SearchResultsFragment.ARTIST_NAME);
-
         if (!artistId.equals(currentArtistId)) {
             // Load top tracks only if different artist selected, i.e. not on rotation
             currentArtistId = artistId;
+            artistName = args.getString(SearchResultsFragment.ARTIST_NAME);
             new FetchArtistTopTracksAsyncTask().execute(artistId);
         }
     }
@@ -84,25 +88,34 @@ public class TopTracksFragment extends ListFragment {
 //        Toast.makeText(getActivity(), R.string.toast_todo_coming_soon, Toast.LENGTH_SHORT).show();
 
         Track track = (Track) getListView().getItemAtPosition(position);
+        String albumName = track.album.name;
+        String trackName = track.name;
+        String albumArtUrl = ImageHelper.findSmallestImage(track.album.images);
+        long duration = track.duration_ms;
+        String trackUrl = track.preview_url;
 
-        MediaPlayerDialogFragment dialogFragment = MediaPlayerDialogFragment.newInstance();
         if (getResources().getBoolean(R.bool.large_layout)) {
+            // Tablet view - use dialog format
+            MediaPlayerDialogFragment dialogFragment = MediaPlayerDialogFragment.newInstance(
+                    artistName,
+                    trackName,
+                    albumName,
+                    albumArtUrl,
+                    trackUrl,
+                    duration
+            );
             dialogFragment.show(getFragmentManager(), "dialog");
+
         } else {
-//            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//            // For a little polish, specify a transition animation
-//            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//            // To make it fullscreen, use the 'content' root view as the container
-//            // for the fragment, which is always dialogFragment root view for the activity
-//            transaction.replace(R.id.artist_top_tracks_container, dialogFragment)
-//                    .addToBackStack(null)
-//                    .commit();
-
+            // Phone view - use embeded view
             Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
-//            intent.putExtra(SearchResultsFragment.ARTIST_ID, artist.id);
-//            intent.putExtra(SearchResultsFragment.ARTIST_NAME, artist.name);
+            intent.putExtra("artistName", artistName);
+            intent.putExtra("trackName", trackName);
+            intent.putExtra("albumName", albumName);
+            intent.putExtra("albumArtUrl", albumArtUrl);
+            intent.putExtra("trackUrl", trackUrl);
+            intent.putExtra("duration", duration);
             startActivity(intent);
-
         }
 
     }
@@ -160,6 +173,26 @@ public class TopTracksFragment extends ListFragment {
             adapter = new ArtistTopTracksAdapter(getActivity(), tracks.tracks);
             setListAdapter(adapter);
 
+            // create a parcelable list of top tracks to pass to media player once user
+            // selects a track to play
+            generateParcelableTrackList(tracks.tracks);
+
+        }
+
+        private List<ParcelableTrack> generateParcelableTrackList(List<Track> tracks) {
+            ArrayList<ParcelableTrack> trackListing = new ArrayList<>();
+            for (Track track : tracks) {
+                ParcelableTrack pTrack = new ParcelableTrack(
+                        artistName,
+                        track.name,
+                        track.album.name,
+                        ImageHelper.findSmallestImage(track.album.images),
+                        track.preview_url,
+                        track.duration_ms);
+
+                trackListing.add(pTrack);
+            }
+            return trackListing;
         }
     }
 
