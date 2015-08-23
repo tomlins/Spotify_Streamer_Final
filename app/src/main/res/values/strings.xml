@@ -10,7 +10,7 @@
 
     <string name="progress_dialog_search_artist_title">Searching</string>
     <string name="progress_dialog_top_tracks_title">Getting Top Tracks</string>
-    <string name="progress_dialog_please_wait">Please wait...</string>
+    <string name="progress_dialog_please_wait">One moment...</string>
 
     <string name="intro_text">Your Favourite Music, Anywhere!</string>
     <string name="title_activity_blank">BlankActivity</string>
@@ -20,7 +20,7 @@
 
     <string name="service_name">MediaPlayerService</string>
     <string name="dialog_buffering">Buffering</string>
-    <string name="dialog_please_wait">Please wait...</string>
+    <string name="dialog_please_wait">One moment...</string>
 
 
 </resources>
