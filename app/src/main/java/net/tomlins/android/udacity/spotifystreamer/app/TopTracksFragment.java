@@ -169,7 +169,7 @@ public class TopTracksFragment extends ListFragment {
                         artistName,
                         track.name,
                         track.album.name,
-                        ImageHelper.findImageClosestToWidth(track.album.images, 700),
+                        ImageHelper.findImageClosestToWidth(track.album.images, 300),
                         track.preview_url,
                         track.duration_ms);
 

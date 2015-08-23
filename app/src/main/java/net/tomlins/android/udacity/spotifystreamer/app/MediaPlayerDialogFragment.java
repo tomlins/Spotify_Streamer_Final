@@ -48,7 +48,7 @@ public class MediaPlayerDialogFragment extends DialogFragment
     private String trackUrl;
 
     private SeekBar seekBar;
-    private int currentSeekPosition = 0;
+    //private int currentSeekPosition = 0;
 
     private TextView artistTextView;
     private TextView albumNameTextView;
@@ -160,10 +160,6 @@ public class MediaPlayerDialogFragment extends DialogFragment
         Picasso.with(getActivity()).load(albumArtUrl).into(albumArt);
         trackNameTextView.setText(currentTrack.getTrackName());
         timeRemainingTextView.setText(R.string.seek_bar_clip_duration);
-//        if (mService!=null) {
-//            seekBar.setProgress(mService.getSeekTo());
-//            //seekBar.setMax(mService.getDuration());
-//        }
     }
 
     @Override
@@ -207,9 +203,9 @@ public class MediaPlayerDialogFragment extends DialogFragment
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mediaPlayerBroadcastReceiver);
         //playPauseButton.setOnClickListener(null);
         killRunnable = true;
-        if (updateSeekBarHandler!=null)
+        if (updateSeekBarHandler != null)
             updateSeekBarHandler.removeCallbacks(null);
-        if (progressDialog!=null && progressDialog.isShowing()) {
+        if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
 
@@ -218,7 +214,7 @@ public class MediaPlayerDialogFragment extends DialogFragment
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(LOG_TAG, "onResume called. Track position at " + currentSeekPosition);
+        Log.d(LOG_TAG, "onResume called");
 
         if (!ConnectivityHelper.isConnectedToInternet(getActivity())) {
             Log.d(LOG_TAG, "No internet connection");
@@ -231,8 +227,13 @@ public class MediaPlayerDialogFragment extends DialogFragment
                 new IntentFilter("net.tomlins.android.udacity.spotifystreamer.service"));
         Log.d(LOG_TAG, "Broadcast receiver registered");
 
-        if (playFinished)
+        if (playFinished) {
+            if (mService!=null && mService.getSeekTo()!=0) {
+                seekBar.setMax(mService.getLastPlayedTrackDuration());
+                seekBar.setProgress(mService.getSeekTo());
+            }
             return;
+        }
 
         if (buffering) {
             playRequested();
@@ -291,20 +292,22 @@ public class MediaPlayerDialogFragment extends DialogFragment
 
         if (mService.isPaused())
             playPauseButton.setImageResource(android.R.drawable.ic_media_play);
+        else
+            playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
 
         updateSeekBarHandler = new Handler();
         updateSeekBarRunnable = new SeekBarRunnable();
         killRunnable = false;
         updateSeekBarHandler.post(updateSeekBarRunnable);
 
-        if (progressDialog!=null && progressDialog.isShowing())
+        if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
 
     }
 
     private void nextTrack() {
         Log.d(LOG_TAG, "Next track");
-        if (trackIdx == trackListing.size()-1) {
+        if (trackIdx == trackListing.size() - 1) {
             Log.d(LOG_TAG, "Already on last track");
             return;
         }
@@ -379,6 +382,7 @@ public class MediaPlayerDialogFragment extends DialogFragment
             mBound = true;
             Log.d(LOG_TAG, "onServiceConnected - service bound");
         }
+
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             mBound = false;
@@ -389,17 +393,20 @@ public class MediaPlayerDialogFragment extends DialogFragment
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser)
-            mService.setCurrentSeekPosition(progress);
+            mService.setCurrentSeekPosition(progress, trackIdx);
     }
 
     @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {}
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
 
     @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {}
+    public void onStopTrackingTouch(SeekBar seekBar) {
+    }
 
     /**
      * Utility method to conver millis into MM:SS
+     *
      * @param millis
      * @return String MM:SS
      */
@@ -415,6 +422,7 @@ public class MediaPlayerDialogFragment extends DialogFragment
         public final String LOG_TAG = SeekBarRunnable.class.getSimpleName();
         private long trackDuration = mService.getDuration();
         private long timeRemaining = 0;
+
         @Override
         public void run() {
             Log.d(LOG_TAG, "handler run called, kill bool is " + killRunnable);
@@ -425,7 +433,7 @@ public class MediaPlayerDialogFragment extends DialogFragment
 
                 timeElapsedTextView.setText(convertMillisToMinsSecs(currentSeekPosition));
                 timeRemainingTextView.setText(convertMillisToMinsSecs(timeRemaining));
-                seekBar.setProgress((int)currentSeekPosition);
+                seekBar.setProgress((int) currentSeekPosition);
             }
             if (!killRunnable)
                 updateSeekBarHandler.postDelayed(updateSeekBarRunnable, 1000);

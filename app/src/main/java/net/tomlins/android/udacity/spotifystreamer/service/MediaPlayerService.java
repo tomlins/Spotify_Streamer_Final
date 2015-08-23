@@ -32,6 +32,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private int currentlyPlayingIdx = -1;
     private String trackUrl;
     private int seekTo;
+    private int lastPlayedTrackDuration;
 
     /**
      * Class used for the client Binder.  Because we know this service always
@@ -61,6 +62,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             // Notify when playback completed
             public void onCompletion(MediaPlayer mp) {
                 Log.d(LOG_TAG, "onCompletion called. Playback Complete");
+                lastPlayedTrackDuration = mediaPlayer.getDuration();
                 resetPlayer();
                 sendBroadcast(PLAY_COMPLETED);
             }
@@ -91,6 +93,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
         Log.d(LOG_TAG, "play called for track " + trackUrl);
         sendBroadcast(PLAY_REQUESTED);
+
+        if (trackIdx != currentlyPlayingIdx)
+            seekTo = 0;
 
         this.trackUrl = trackUrl;
         this.currentlyPlayingIdx = trackIdx;
@@ -153,16 +158,22 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     public int getSeekTo() {
         return seekTo;
     }
+    
+    public int getLastPlayedTrackDuration() {
+        return lastPlayedTrackDuration;
+    }
 
     public int getCurrentlyPlayingIdx() {
         return currentlyPlayingIdx;
     }
 
-    public void setCurrentSeekPosition(int position) {
+    public void setCurrentSeekPosition(int position, int track) {
         if (mediaPlayer.isPlaying() || isPaused())
             mediaPlayer.seekTo(position);
-        else
+        else {
             seekTo = position;
+            currentlyPlayingIdx = track;
+        }
     }
 
     public boolean playPause(int trackIdx) {
