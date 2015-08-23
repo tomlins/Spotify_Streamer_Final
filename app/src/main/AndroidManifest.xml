@@ -30,6 +30,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+
         <activity
             android:name=".app.ArtistTopTracksActivity"
             android:label="@string/title_activity_artist_top_tracks"
@@ -38,15 +39,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.tomlins.android.udacity.spotifystreamer.app.MainActivity" />
         </activity>
+
         <activity
             android:name=".app.MediaPlayerActivity"
-            android:label="@string/title_activity_media_player" >
+            android:label="@string/title_activity_media_player">
         </activity>
 
         <service
             android:name=".service.MediaPlayerService"
             android:label="@string/service_name">
         </service>
+
     </application>
 
 </manifest>

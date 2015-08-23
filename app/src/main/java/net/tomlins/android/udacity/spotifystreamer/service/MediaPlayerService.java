@@ -31,6 +31,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private boolean isPaused = false;
     private int currentlyPlayingIdx = -1;
     private String trackUrl;
+    private int seekTo;
 
     /**
      * Class used for the client Binder.  Because we know this service always
@@ -71,6 +72,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mediaPlayer.reset();
         isPaused = false;
         currentlyPlayingIdx = -1;
+        seekTo = 0;
     }
 
     @Nullable
@@ -117,10 +119,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        mp.start();
-        sendBroadcast(PLAY_STARTED);
+        Log.d(LOG_TAG, "onPrepared - playing, seek position = " + seekTo);
         isPaused = false;
-        Log.d(LOG_TAG, "playing, track duration = " + mp.getDuration());
+        if (seekTo!=0)
+            mp.seekTo(seekTo);
+        sendBroadcast(PLAY_STARTED);
+        mp.start();
     }
 
     @Override
@@ -146,15 +150,22 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         return mediaPlayer.getCurrentPosition();
     }
 
+    public int getSeekTo() {
+        return seekTo;
+    }
+
     public int getCurrentlyPlayingIdx() {
         return currentlyPlayingIdx;
     }
 
     public void setCurrentSeekPosition(int position) {
+        if (mediaPlayer.isPlaying() || isPaused())
             mediaPlayer.seekTo(position);
+        else
+            seekTo = position;
     }
 
-    public boolean playPause() {
+    public boolean playPause(int trackIdx) {
         if (isPaused) {
             mediaPlayer.start();
             isPaused = false;
@@ -164,7 +175,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             isPaused = true;
             Log.d(LOG_TAG, "playPause play paused");
         } else {
-            play(trackUrl, currentlyPlayingIdx);
+            //play(trackUrl, currentlyPlayingIdx);
+            play(trackUrl, trackIdx);
         }
 
         // we return true to indicate state changed

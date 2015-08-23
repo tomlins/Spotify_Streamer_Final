@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="left"
-            android:text="0:00"
+            android:text="@string/seek_bar_zero_time"
             android:textAlignment="gravity" />
 
         <TextView
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="0:00"
+            android:text="@string/seek_bar_zero_time"
             android:textAlignment="gravity" />
 
     </LinearLayout>

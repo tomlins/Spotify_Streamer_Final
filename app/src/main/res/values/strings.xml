@@ -21,6 +21,8 @@
     <string name="service_name">MediaPlayerService</string>
     <string name="dialog_buffering">Buffering</string>
     <string name="dialog_please_wait">One moment...</string>
+    <string name="seek_bar_zero_time">00:00</string>
+    <string name="seek_bar_clip_duration">00:30</string>
 
 
 </resources>

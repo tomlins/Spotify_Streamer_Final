@@ -132,7 +132,6 @@ public class MediaPlayerDialogFragment extends DialogFragment
         trackNameTextView = (TextView) view.findViewById(R.id.album_track);
         timeElapsedTextView = (TextView) view.findViewById(R.id.track_time_elapsed);
         timeRemainingTextView = (TextView) view.findViewById(R.id.track_time_remaining);
-        updateView(currentTrack);
 
         ImageButton previousButton = (ImageButton) view.findViewById(R.id.previous_button);
         previousButton.setOnClickListener(this);
@@ -148,15 +147,23 @@ public class MediaPlayerDialogFragment extends DialogFragment
         seekBar = (SeekBar) view.findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
 
+        updateView(currentTrack);
+
         return view;
     }
 
     private void updateView(ParcelableTrack currentTrack) {
+        Log.d(LOG_TAG, "updateView - updating view");
         artistTextView.setText(currentTrack.getArtistName());
         albumNameTextView.setText(currentTrack.getAlbumName());
         String albumArtUrl = currentTrack.getAlbumArtUrl();
         Picasso.with(getActivity()).load(albumArtUrl).into(albumArt);
         trackNameTextView.setText(currentTrack.getTrackName());
+        timeRemainingTextView.setText(R.string.seek_bar_clip_duration);
+//        if (mService!=null) {
+//            seekBar.setProgress(mService.getSeekTo());
+//            //seekBar.setMax(mService.getDuration());
+//        }
     }
 
     @Override
@@ -166,7 +173,7 @@ public class MediaPlayerDialogFragment extends DialogFragment
 
             case R.id.play_pause_button:
                 Log.d(LOG_TAG, "play/pause pressed");
-                mService.playPause();
+                mService.playPause(trackIdx);
                 if (mService.isPaused()) {
                     playPauseButton.setImageResource(android.R.drawable.ic_media_play);
                 } else {
@@ -331,6 +338,8 @@ public class MediaPlayerDialogFragment extends DialogFragment
         updateSeekBarHandler.removeCallbacks(null);
         playPauseButton.setImageResource(android.R.drawable.ic_media_play);
         seekBar.setProgress(0);
+        timeElapsedTextView.setText(R.string.seek_bar_zero_time);
+        timeRemainingTextView.setText(convertMillisToMinsSecs(seekBar.getMax()));
     }
 
 
@@ -389,6 +398,19 @@ public class MediaPlayerDialogFragment extends DialogFragment
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {}
 
+    /**
+     * Utility method to conver millis into MM:SS
+     * @param millis
+     * @return String MM:SS
+     */
+    private String convertMillisToMinsSecs(long millis) {
+        return String.format("%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(millis),
+                TimeUnit.MILLISECONDS.toSeconds(millis)
+                        - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+        );
+    }
+
     private class SeekBarRunnable implements Runnable {
         public final String LOG_TAG = SeekBarRunnable.class.getSimpleName();
         private long trackDuration = mService.getDuration();
@@ -401,18 +423,8 @@ public class MediaPlayerDialogFragment extends DialogFragment
                 long currentSeekPosition = mService.getCurrentSeekPosition();
                 timeRemaining = trackDuration - currentSeekPosition;
 
-                timeElapsedTextView.setText(String.format("%d:%d",
-                        TimeUnit.MILLISECONDS.toMinutes(currentSeekPosition),
-                        TimeUnit.MILLISECONDS.toSeconds(currentSeekPosition)
-                                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentSeekPosition))
-                ));
-
-                timeRemainingTextView.setText(String.format("%d:%d",
-                        TimeUnit.MILLISECONDS.toMinutes(timeRemaining),
-                        TimeUnit.MILLISECONDS.toSeconds(timeRemaining)
-                                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeRemaining))
-                ));
-
+                timeElapsedTextView.setText(convertMillisToMinsSecs(currentSeekPosition));
+                timeRemainingTextView.setText(convertMillisToMinsSecs(timeRemaining));
                 seekBar.setProgress((int)currentSeekPosition);
             }
             if (!killRunnable)
