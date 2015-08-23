@@ -10,7 +10,7 @@
 
     <!-- ActionBar styles -->
     <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="displayOptions">useLogo|showHome</item>
+        <item name="displayOptions">showHome|showTitle</item>
         <item name="logo">@drawable/ic_logo</item>
         <item name="titleTextStyle">@style/MyActionBarTitleText</item>
     </style>

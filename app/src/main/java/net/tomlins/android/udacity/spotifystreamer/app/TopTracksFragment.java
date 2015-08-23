@@ -42,6 +42,7 @@ public class TopTracksFragment extends ListFragment {
     private ListView rootView;
     private String currentArtistId;
     private String artistName;
+    private ArrayList<ParcelableTrack> trackListing;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -85,36 +86,18 @@ public class TopTracksFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Log.d(LOG_TAG, "onListItemClick called, list position " + position);
-//        Toast.makeText(getActivity(), R.string.toast_todo_coming_soon, Toast.LENGTH_SHORT).show();
-
-        Track track = (Track) getListView().getItemAtPosition(position);
-        String albumName = track.album.name;
-        String trackName = track.name;
-        String albumArtUrl = ImageHelper.findSmallestImage(track.album.images);
-        long duration = track.duration_ms;
-        String trackUrl = track.preview_url;
 
         if (getResources().getBoolean(R.bool.large_layout)) {
-            // Tablet view - use dialog format
-            MediaPlayerDialogFragment dialogFragment = MediaPlayerDialogFragment.newInstance(
-                    artistName,
-                    trackName,
-                    albumName,
-                    albumArtUrl,
-                    trackUrl,
-                    duration
-            );
+            MediaPlayerDialogFragment dialogFragment =
+                    MediaPlayerDialogFragment.newInstance(trackListing, position);
+
             dialogFragment.show(getFragmentManager(), "dialog");
 
         } else {
             // Phone view - use embeded view
             Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
-            intent.putExtra("artistName", artistName);
-            intent.putExtra("trackName", trackName);
-            intent.putExtra("albumName", albumName);
-            intent.putExtra("albumArtUrl", albumArtUrl);
-            intent.putExtra("trackUrl", trackUrl);
-            intent.putExtra("duration", duration);
+            intent.putParcelableArrayListExtra("trackListing", trackListing);
+            intent.putExtra("trackIdx", position);
             startActivity(intent);
         }
 
@@ -175,18 +158,18 @@ public class TopTracksFragment extends ListFragment {
 
             // create a parcelable list of top tracks to pass to media player once user
             // selects a track to play
-            generateParcelableTrackList(tracks.tracks);
+            trackListing = generateParcelableTrackList(tracks.tracks);
 
         }
 
-        private List<ParcelableTrack> generateParcelableTrackList(List<Track> tracks) {
+        private ArrayList<ParcelableTrack> generateParcelableTrackList(List<Track> tracks) {
             ArrayList<ParcelableTrack> trackListing = new ArrayList<>();
             for (Track track : tracks) {
                 ParcelableTrack pTrack = new ParcelableTrack(
                         artistName,
                         track.name,
                         track.album.name,
-                        ImageHelper.findSmallestImage(track.album.images),
+                        ImageHelper.findImageClosestToWidth(track.album.images, 300),
                         track.preview_url,
                         track.duration_ms);
 

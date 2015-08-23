@@ -22,7 +22,7 @@ public class MainActivity extends ActionBarActivity implements SearchResultsFrag
     public final String LOG_TAG = MainActivity.class.getSimpleName();
     private SearchView searchView;
     private boolean mMasterDetailView = false;
-    private static final String TOPTRACKSFRAGMENT_TAG = "TTFRAG";
+    public static final String TOPTRACKSFRAGMENT_TAG = "TTFRAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

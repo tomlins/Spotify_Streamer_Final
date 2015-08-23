@@ -56,10 +56,10 @@ public class SearchResultsFragment extends ListFragment {
 
         // Inflate the view for use when no artist search results
         // to display, ie app launch
-        emptyView = inflater.inflate(
-                R.layout.empty_view,
-                container,
-                false);
+//        emptyView = inflater.inflate(
+//                R.layout.empty_view,
+//                container,
+//                false);
 
         // Inflate the list view
         rootView = (ListView)inflater.inflate(
@@ -76,11 +76,11 @@ public class SearchResultsFragment extends ListFragment {
         Log.d(LOG_TAG, "onActivityCreated called");
 
         // Add the empty view to the view group
-        ((ViewGroup)getListView().getParent()).addView(emptyView);
+        //((ViewGroup)getListView().getParent()).addView(emptyView);
 
         // when no search results to display, ie on app launch
         // set the view to the empty view
-        getListView().setEmptyView(emptyView);
+        //getListView().setEmptyView(emptyView);
 
     }
 
@@ -160,6 +160,12 @@ public class SearchResultsFragment extends ListFragment {
 
             adapter = new SearchResultsListArrayAdapter(getActivity(), artistsPager.artists.items);
             setListAdapter(adapter);
+
+            if (getResources().getBoolean(R.bool.large_layout)) {
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.artist_top_tracks_container, new TopTracksFragment(), MainActivity.TOPTRACKSFRAGMENT_TAG)
+                        .commit();
+            }
 
         }
     }

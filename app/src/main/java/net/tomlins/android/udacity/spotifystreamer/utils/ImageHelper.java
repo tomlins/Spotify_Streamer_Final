@@ -26,4 +26,19 @@ public class ImageHelper {
         }
         return url;
     }
+
+    public static String findImageClosestToWidth(List<Image> images, int width) {
+        Iterator it = images.iterator();
+        int currentWidth = 0;
+        String url = null;
+
+        while (it.hasNext()) {
+            Image image = (Image) it.next();
+            if (image.width <= width && image.width > currentWidth) {
+                url = image.url;
+                currentWidth = image.width;
+            }
+        }
+        return url;
+    }
 }
