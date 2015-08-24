@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +18,7 @@ import net.tomlins.android.udacity.spotifystreamer.utils.ConnectivityHelper;
 import kaaes.spotify.webapi.android.models.Artist;
 
 
-public class MainActivity extends ActionBarActivity implements SearchResultsFragment.Callback {
+public class MainActivity extends AppCompatActivity implements SearchResultsFragment.Callback {
 
     public final String LOG_TAG = MainActivity.class.getSimpleName();
     private SearchView searchView;
@@ -45,7 +46,11 @@ public class MainActivity extends ActionBarActivity implements SearchResultsFrag
             }
         } else {
             mMasterDetailView = false;
-            getSupportActionBar().setElevation(0f);
+            try {
+                getSupportActionBar().setElevation(0f);
+            } catch (NullPointerException x) {
+                Log.e(LOG_TAG, "Unable to setElevation on supportActionBar");
+            }
         }
 
     }
