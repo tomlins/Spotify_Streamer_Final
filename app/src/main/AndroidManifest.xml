@@ -42,7 +42,8 @@
 
         <activity
             android:name=".app.MediaPlayerActivity"
-            android:label="@string/title_activity_media_player">
+            android:label="@string/title_activity_media_player"
+            android:parentActivityName=".app.ArtistTopTracksActivity">
         </activity>
 
         <service

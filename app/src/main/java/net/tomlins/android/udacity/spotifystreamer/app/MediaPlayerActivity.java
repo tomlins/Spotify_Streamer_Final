@@ -1,6 +1,7 @@
 package net.tomlins.android.udacity.spotifystreamer.app;
 
 import android.content.Intent;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,6 +19,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_player);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         // Retrieve and set the subtitle for the action bar to the selected artist
         Intent intent = getIntent();
         ArrayList<ParcelableTrack> trackListing = intent.getParcelableArrayListExtra("trackListing");
@@ -33,8 +36,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
                     .add(R.id.media_player_container, dialogFragment)
                     .commit();
         }
-
-
     }
 
     @Override
@@ -46,16 +47,23 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                //this method requires android:launchMode="singleTop" in the manifest
+                //where the parent activity is declared
+                //NavUtils.navigateUpFromSameTask(this);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+                // this method does not require android:launchMode="singleTop"
+                Intent upIntent = NavUtils.getParentActivityIntent(this);
+                upIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                NavUtils.navigateUpTo(this, upIntent);
+                return true;
+
+            // Settings action -> place holder only
+            case R.id.action_settings:
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
